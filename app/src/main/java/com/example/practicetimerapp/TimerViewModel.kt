@@ -17,7 +17,7 @@ class TimerViewModel: ViewModel() {
         get() {
             val seconds = (timeLeft / 1000) % 60
             val minutes = (timeLeft / 1000) / 60
-            return String.format(Locale.JAPANESE, "%2d:%2d", minutes, seconds)
+            return String.format(Locale.JAPANESE, "%02d:%02d", minutes, seconds)
         }
 
     // 合計時間を計算
@@ -25,7 +25,7 @@ class TimerViewModel: ViewModel() {
         get() {
             val seconds = (totalTime / 1000) % 60
             val minutes = (totalTime / 1000) / 60
-            return String.format(Locale.JAPANESE, "%2d:%2d", minutes, seconds)
+            return String.format(Locale.JAPANESE, "%02d:%02d", minutes, seconds)
         }
 
     // カウントダウン用のダミー実装
