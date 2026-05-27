@@ -123,10 +123,11 @@ fun BottomView(viewModel: TimerViewModel) {
         horizontalArrangement = Arrangement.Center
     ) {
         FilledIconButton(
-            onClick = {viewModel.countDown()},
+            onClick = {viewModel.stateOrPauseTimer()},
         ){
+            val iconId = if (viewModel.isRunning) R.drawable.img_pause else R.drawable.img_play
             Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.img_play),
+                imageVector = ImageVector.vectorResource(id = iconId),
                 contentDescription = "start/pause"
             )
         }

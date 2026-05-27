@@ -41,8 +41,20 @@ class TimerViewModel: ViewModel() {
             return String.format(Locale.JAPANESE, "%02d:%02d", minutes, seconds)
         }
 
-    // カウントダウン用のダミー実装
-    fun countDown() {
+    // 一時停止
+    fun stateOrPauseTimer() {
+        when (state) {
+            TimerState.STOPPED, TimerState.PAUSED -> {
+                countDown()
+            }
+            TimerState.RUNNING -> {
+                state = TimerState.PAUSED
+            }
+        }
+    }
+
+    // カウントダウン
+    private fun countDown() {
         timer?.cancel()
         state = TimerState.RUNNING
         timer = viewModelScope.launch {
