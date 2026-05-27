@@ -16,7 +16,7 @@ enum class TimerState {
     RUNNING, // 稼働中
     PAUSED, // 一時停止中
 }
-class TimerViewModel: ViewModel() {
+class TimerViewModel : ViewModel() {
     private var initTime = 60_000L // デフォルト 60秒
     private var totalTime by mutableLongStateOf(initTime) // カウント
     private var timeLeft by mutableLongStateOf(initTime) // 残り時間
@@ -24,6 +24,8 @@ class TimerViewModel: ViewModel() {
     private var state by mutableStateOf(TimerState.STOPPED) // 動作状況
     val isRunning get() = state == TimerState.RUNNING // 稼働中かどうか
     val progress get() = timeLeft / totalTime.toFloat() // 進捗状況
+    var finish by mutableStateOf(false)
+        private set
 
     /// 残り時間を計算
     val timeLeftText: String
@@ -58,20 +60,29 @@ class TimerViewModel: ViewModel() {
         timer?.cancel()
         state = TimerState.RUNNING
         timer = viewModelScope.launch {
-            while (timeLeft > 0 && isRunning){
+            while (timeLeft > 0 && isRunning) {
                 delay(100)
                 timeLeft -= 100
             }
-            if (timeLeft <= 0){
+            if (timeLeft <= 0) {
                 timeLeft = 0
                 state = TimerState.STOPPED
+                finish = true
             }
         }
     }
 
     // タイマーリセット
     fun resetTimer() {
+        state = TimerState.STOPPED
+        timer?.cancel()
+        timer = null
         totalTime = initTime
         timeLeft = initTime
+    }
+
+    fun applyFinish() {
+        timeLeft = totalTime
+        finish = false
     }
 }

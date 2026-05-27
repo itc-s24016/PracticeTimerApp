@@ -34,6 +34,12 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import android.media.MediaPlayer
+import android.media.RingtoneManager
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalContext
 
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -65,8 +71,39 @@ fun Main() {
             TimerView(viewModel)
         }
     }
+    if (viewModel.finish) {
+        FinishDialog(viewModel)
+    }
 }
 
+@Composable
+fun FinishDialog(
+    viewModel: TimerViewModel
+){
+    val context = LocalContext.current
+
+    DisposableEffect(Unit) {
+        val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val mediaPlayer = MediaPlayer.create(context, uri).apply {
+            isLooping = true
+            start()
+        }
+        onDispose {
+            mediaPlayer.stop()
+            mediaPlayer.release()
+        }
+    }
+    AlertDialog(
+        title = {Text("タイマー終了")},
+        text = {Text("時間が来ました！")},
+        onDismissRequest = {viewModel.applyFinish()},
+        confirmButton = {
+            TextButton(onClick = {viewModel.applyFinish()}){
+                Text("OK")
+            }
+        }
+    )
+}
 @Composable
 fun TimerView(viewModel: TimerViewModel) {
     Column(
