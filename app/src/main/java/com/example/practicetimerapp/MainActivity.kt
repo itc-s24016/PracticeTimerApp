@@ -16,6 +16,26 @@ import com.example.practicetimerapp.ui.theme.PracticeTimerAppTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,9 +51,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Main() {
-    Scaffold (//
-
-    ){ innerPadding ->
+    val viewModel: TimerViewModel = viewModel()
+    Scaffold(
+        bottomBar = { BottomView(viewModel) }
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -41,7 +62,81 @@ fun Main() {
                 .padding(16.dp),
             contentAlignment = Alignment.TopCenter
         ) {
+            TimerView(viewModel)
+        }
+    }
+}
 
+@Composable
+fun TimerView(viewModel: TimerViewModel) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        BoxWithConstraints(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            val size = minOf(maxWidth, maxHeight)
+
+            Box(
+                modifier = Modifier
+                    .size(size)
+                    .padding(8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    progress = { viewModel.progress },
+                    modifier = Modifier.fillMaxSize(),
+                    strokeWidth = 16.dp
+                )
+                Text(
+                    text = viewModel.timeLeftText,
+                    fontSize = 48.sp
+                )
+            }
+        }
+
+        OutlinedTextField(
+            value = viewModel.totalTimeText,
+            onValueChange = {},
+            label = { Text("指定の時間") },
+            readOnly = true,
+            textStyle = LocalTextStyle.current.copy(
+                fontSize = 24.sp,
+                textAlign = TextAlign.Center
+            )
+        )
+    }
+}
+
+@Composable
+fun BottomView(viewModel: TimerViewModel) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
+            .navigationBarsPadding()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        FilledIconButton(
+            onClick = {viewModel.countDown()},
+        ){
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.img_play),
+                contentDescription = "start/pause"
+            )
+        }
+        FilledIconButton(
+            onClick = {viewModel.resetTimer()},
+        ){
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.img_reset),
+                contentDescription = "reset"
+            )
         }
     }
 }
