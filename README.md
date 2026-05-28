@@ -1,6 +1,6 @@
 # タイマーアプリ  
 ## Android Studio で Kotlin
-### 目的：
+### 目的：カスタムゲッタと UI との責務分離、DataStore の使い方を学ぶ
 ## 最初の画面  
 <img width="350" height="787" alt="image" src="https://github.com/user-attachments/assets/826aa1f5-2ff4-4a53-b9bf-6418fb09cc6d" />  
   
