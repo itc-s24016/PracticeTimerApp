@@ -10,12 +10,23 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import android.content.Context
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.first
 
 enum class TimerState {
     STOPPED, // 停止
     RUNNING, // 稼働中
     PAUSED, // 一時停止中
 }
+// DataStore を使うための拡張関数
+private val Context.dataState by preferencesDataStore(name = "settings")
+
+// DataStore に保存するときのキー
+private val totalTimeKey = longPreferencesKey("total_time")
+
 class TimerViewModel : ViewModel() {
     private var initTime = 60_000L // デフォルト 60秒
     private var totalTime by mutableLongStateOf(initTime) // カウント
@@ -95,5 +106,22 @@ class TimerViewModel : ViewModel() {
     fun applyFinish() {
         timeLeft = totalTime
         finish = false
+    }
+
+    fun saveTotalTime(context: Context) {
+        viewModelScope.launch {
+            context.dataState.edit { preferences ->
+                preferences[totalTimeKey] = totalTime
+                initTime = totalTime
+            }
+        }
+    }
+    fun loadTotalTime(context: Context) {
+        viewModelScope.launch {
+            val preferences = context.dataState.data.first()
+            val restored = preferences[totalTimeKey] ?: initTime
+            initTime = restored
+            resetTimer()
+        }
     }
 }

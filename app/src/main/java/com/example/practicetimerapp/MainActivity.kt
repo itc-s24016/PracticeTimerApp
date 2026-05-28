@@ -42,6 +42,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.VerticalDivider
+import android.widget.Toast
 
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -153,6 +154,7 @@ fun TimerView(viewModel: TimerViewModel) {
 
 @Composable
 fun BottomView(viewModel: TimerViewModel) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -179,6 +181,7 @@ fun BottomView(viewModel: TimerViewModel) {
                 contentDescription = "-1"
             )
         }
+        // ただの区切り線
         VerticalDivider(
             modifier = Modifier
                 .fillMaxHeight()
@@ -200,6 +203,35 @@ fun BottomView(viewModel: TimerViewModel) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.img_reset),
                 contentDescription = "reset"
+            )
+        }
+        // ただの区切り線
+        VerticalDivider(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(4.dp),
+            thickness = 2.dp,
+        )
+        FilledIconButton(
+            onClick = {
+                viewModel.saveTotalTime(context)
+                Toast.makeText(context, "設定を保存しました", Toast.LENGTH_LONG).show()
+            },
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.img_save),
+                contentDescription = "save"
+            )
+        }
+        FilledIconButton(
+            onClick = {
+                viewModel.loadTotalTime(context)
+                Toast.makeText(context, "設定を復元しました", Toast.LENGTH_LONG).show()
+            },
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.img_load),
+                contentDescription = "load"
             )
         }
     }
