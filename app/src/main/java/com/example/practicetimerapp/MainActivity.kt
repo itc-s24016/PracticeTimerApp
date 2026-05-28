@@ -40,6 +40,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.material3.VerticalDivider
 
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -159,6 +161,30 @@ fun BottomView(viewModel: TimerViewModel) {
             .padding(16.dp),
         horizontalArrangement = Arrangement.Center
     ) {
+        FilledIconButton(
+            onClick = {viewModel.plus1()},
+            enabled = viewModel.canPlus1
+        ){
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.img_plus_1),
+                contentDescription = "+1"
+            )
+        }
+        FilledIconButton(
+            onClick = {viewModel.minus1()},
+            enabled = viewModel.canMinus1
+        ){
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.img_minus_1),
+                contentDescription = "-1"
+            )
+        }
+        VerticalDivider(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(4.dp),
+            thickness = 2.dp
+        )
         FilledIconButton(
             onClick = {viewModel.stateOrPauseTimer()},
         ){

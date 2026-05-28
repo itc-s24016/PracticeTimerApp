@@ -23,6 +23,8 @@ class TimerViewModel : ViewModel() {
     private var timer: Job? = null // タイマー用 Job
     private var state by mutableStateOf(TimerState.STOPPED) // 動作状況
     val isRunning get() = state == TimerState.RUNNING // 稼働中かどうか
+    val canPlus1 get() = timeLeft <= 60_000L * 59 // 1分 * 59 で残り時間が 59 分以下なら true
+    val canMinus1 get() = timeLeft > 60_000L // 残り時間が 1分より大きいなら true
     val progress get() = timeLeft / totalTime.toFloat() // 進捗状況
     var finish by mutableStateOf(false)
         private set
@@ -42,7 +44,16 @@ class TimerViewModel : ViewModel() {
             val minutes = (totalTime / 1000) / 60
             return String.format(Locale.JAPANESE, "%02d:%02d", minutes, seconds)
         }
-
+    // +1分追加
+    fun plus1() {
+        timeLeft += 60_000L
+        totalTime += 60_000L
+    }
+    // -1分減少
+    fun minus1() {
+        timeLeft -= 60_000L
+        totalTime -= 60_000L
+    }
     // 一時停止
     fun stateOrPauseTimer() {
         when (state) {
